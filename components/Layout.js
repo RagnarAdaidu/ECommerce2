@@ -27,7 +27,7 @@ export default function Layout({ title, children }) {
           {children}
         </main>
         <footer className='flex justify-center items-center h-10 shadow-inner'>
-          Footer
+          <p>Copyright c 2023 Amazona</p>
         </footer>
       </div>
     </>
