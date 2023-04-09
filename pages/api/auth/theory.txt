@@ -1,0 +1,136 @@
+Layout is a component dat is a rapper for all pages
+
+make anytin a parameter by adding [] square bracket to it
+
+getting anytin from the URL. we use {query} from useRouter hook, we can get the parameter from the URL
+example 
+const {query} = useRouter()
+const {parameter} = query
+
+what does -D types/react do
+
+create react context to save cart item in the react application throughout all pages
+
+Provider accepts children as a parameter. it creates a wrapper for the children and passes to every child its state and dispatch function
+
+we get state and dispatch from the reducer hook. the parameters inside the reducer hook are initial state and reducer function
+
+return the provider (eg Store.Provider) Store is coming from createContext function and Provider is a wrapper. it provides for all the children it covers
+
+context provides a way to pass data thru the component tree without having to pass props down manually at every level
+
+Error: Hydration failed because the initial ui does not match what was rendered on the server(getting 2 different values on d client side and server side)
+
+Render that as cli ent side component
+
+export default dynamic(() => Promise.resolve(CartScreen), {ssr: false})
+
+what we are trying to do is to export CartScreen as dynamic page that will be rendered only in client side
+
+useEffect only will be rendered in d client side
+
+mongoose: mongodb object modelling tool for nodejs
+
+the token is in the nextAuth life cycle
+user is coming from the db
+status: is a flag that shows the loading of session
+
+NextAuth.js to provide credential authentication
+
+getServerSideProps function runs before any rendering of component and it provides data for the component
+
+.lean(): by using lean, we get product information instead of meta data of mongodb(Use lean() to convert it to javascript object)
+
+onClick = {() => router.push('/shipping')}
+
+
+
+
+
+
+
+
+
+
+<td className='p-5 text-right'>
+                        <select value={item.countInStock} onChange={(e) => updateCartHandler(item, e.target.value)} >
+                          {[...Array(item.countInStock).keys()].map((x) => (
+                            <option key={x=1} value={x+1} >
+                              {x+1}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+
+
+import {createContext, useReducer} from 'react'
+ 
+
+const Store = createContext()
+
+const initialState = {
+  cart: {cartItems: []}
+}
+
+function reducer(state, action) {
+  switch(action.type){
+    case 'CART_ADD_ITEM': {
+      const newItem = action.payload
+      const existItem = state.cart.cartItems.find(
+        (item) => item.slug === newItem.slug
+      )
+      const cartItems = existItem ? state.cart.cartItems.map((item) => 
+        item.name === existItem.name ? newItem : item
+      )
+      : [...state.cart.cartItems, newItem]
+      return {...state, cart: {...state.cart, cartItems}}
+    }
+    case 'CART_REMOVE_ITEM': {
+      const cartItems = state.cart.cartItems.filter((item) => 
+      (
+        item.slug !== action.payload.slug
+      ))
+      return {...state, cart: {...state.cart, cartItems}}
+    }
+    default:
+      return state
+  }
+} 
+
+export function StoreProvider({children}){
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const value = {state, dispatch}
+  return <Store.Provider value={value}>
+    {children}
+  </Store.Provider>
+}
+
+export default Store
+
+
+
+
+
+
+export default function ProductScreen () {
+
+  const {state, dispatch} = useContext(Store)
+
+  const { query } = useRouter()
+  const { slug } = query
+  const product = data.products.find(x => x.slug === slug)
+
+  if (!product){
+    return <div>Product Not Found</div>
+  }
+
+  const addToCartHandler = () => {
+    const existItem = state.cart.cartItems.find((x) => x.slug === product.slug)
+    const quantity = existItem ? existItem.quantity + 1:  1;
+
+    if (product.countInStock < quantity){
+      alert('Sorry, Product out of stock!')
+      return
+    }
+     dispatch({type: 'CART_ADD_ITEM', payload: {...product, quantity}})
+  }
