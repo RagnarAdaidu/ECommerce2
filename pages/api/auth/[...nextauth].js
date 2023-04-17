@@ -18,7 +18,7 @@ export default NextAuth({
       if (token?._id) session._id = token._id
       if (token?.isAdmin) session.isAdmin = token.isAdmin
       return session
-    }
+    },
   },
   providers: [
     CredentialsProvider({
@@ -41,5 +41,6 @@ export default NextAuth({
         throw new Error('Invalid Email or Password')
       }
     })
-  ]
+  ],
+  secret: process.env.NEXTAUTH_SECRET
 })
